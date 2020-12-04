@@ -1,16 +1,7 @@
 ;; MELPA packages
-
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
-
-;; Installed things:
-;; magit
-;; restart-emacs
-;; doom-themes
-;; spacemacs-theme
-;; markdown-mode
-;; yaml-mode
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General configurations ;;
@@ -39,9 +30,10 @@
 (setq undo-tree-history-directory-alist `(("." . "~/.emacs.d/.undo")))
 (setq backup-directory-alist `(("." . "~/.emacs.d/.saves")))
 
-;;;;;;;;;;;;;;;;;
-;; Extra modes ;;
-;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Miscellaneous packages ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package ivy
   :ensure t
@@ -55,6 +47,13 @@
 (use-package projectile
   :ensure t
   :config (projectile-mode t))
+
+(use-package restart-emacs :ensure t)
+(use-package magit :ensure t)
+(use-package doom-themes :ensure t)
+(use-package markdown-mode :ensure t)
+(use-package yaml-mode :ensure t)
+
 
 ;;;;;;;;;;;;;;
 ;; Org mode ;;
@@ -71,6 +70,7 @@
 	 '((python . t)
 	   (java   . t)
 	   )))
+
 
 ;;;;;;;;;;;;;;;
 ;; Evil mode ;;
@@ -91,6 +91,10 @@
 			     (push '(?$ . ("$" . "$")) evil-surround-pairs-alist)))  ; not working?
   (add-hook 'org-mode-hook (lambda ()
 			     (push '(?/ . ("/" . "/")) evil-surround-pairs-alist)))  ; not working?
+
+  ;; Make these modes not in emacs state, but evil state
+  (setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
+  (setq evil-emacs-state-modes (delq 'package-menu-mode evil-emacs-state-modes))
 
   ;; Leader keybindings
   (use-package evil-leader
@@ -136,17 +140,12 @@
   ;; Surround
   (use-package evil-surround
     :ensure t
-    :config (global-evil-surround-mode)))
+    :config (global-evil-surround-mode))
 
-;; Magit
-(evil-magit-init)
-
-;; Make these modes not in emacs state, but evil state:
-;; - ibuffer-mode
-;; - package-menu-mode
-(setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
-(setq evil-emacs-state-modes (delq 'package-menu-mode evil-emacs-state-modes))
-(setq evil-emacs-state-modes (cons 'treemacs-mode evil-emacs-state-modes))
+  ;; Magit
+  (use-package evil-magit
+    :ensure t
+    :config (evil-magit-init)))
 
 ;; Treemacs
 (use-package treemacs
@@ -252,7 +251,7 @@
     ("99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" "9efb2d10bfb38fe7cd4586afb3e644d082cbcdb7435f3d1e8dd9413cbe5e61fc" "76bfa9318742342233d8b0b42e824130b3a50dcc732866ff8e47366aed69de11" "711efe8b1233f2cf52f338fd7f15ce11c836d0b6240a18fffffc2cbd5bfe61b0" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (use-package treemacs-evil projectile yaml-mode markdown-mode evil-magit doom-themes spacemacs-theme evil-surround restart-emacs treemacs evil-escape evil-leader magit ivy-hydra ivy which-key evil))))
+    (use-package treemacs-evil projectile yaml-mode markdown-mode evil-magit doom-themes evil-surround restart-emacs treemacs evil-escape evil-leader magit ivy-hydra ivy which-key evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
