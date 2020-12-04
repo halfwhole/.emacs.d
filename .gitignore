@@ -1,0 +1,8 @@
+.cache/
+.saves/
+auto-save-list/
+elpa/
+eshell/
+projectile-bookmarks.eld
+session.*
+transient/
