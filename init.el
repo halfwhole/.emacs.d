@@ -115,6 +115,8 @@
       "h v" 'describe-variable
       "m p" 'markdown-preview
       "o t" 'treemacs
+      "p a" 'treemacs-add-project-to-workspace
+      "p r" 'treemacs-remove-project-from-workspace
       "q r" 'restart-emacs
       "w d" 'evil-window-delete
       "w k" 'evil-window-up
@@ -147,7 +149,11 @@
     :ensure t
     :config (evil-magit-init)))
 
-;; Treemacs
+
+;;;;;;;;;;;;;;
+;; Treemacs ;;
+;;;;;;;;;;;;;;
+
 (use-package treemacs
   :ensure t
   :defer t
