@@ -3,10 +3,12 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General configurations ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(desktop-save-mode 1)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (global-hl-line-mode 1)
@@ -50,7 +52,9 @@
 
 (use-package restart-emacs :ensure t)
 (use-package magit :ensure t)
+(use-package all-the-icons :ensure t)
 (use-package doom-themes :ensure t)
+(use-package doom-modeline :ensure t :init (doom-modeline-mode 1))
 (use-package markdown-mode :ensure t)
 (use-package yaml-mode :ensure t)
 

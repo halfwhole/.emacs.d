@@ -1,4 +1,6 @@
 .cache/
+.emacs.desktop
+.emacs.desktop.lock
 .saves/
 auto-save-list/
 elpa/
@@ -6,3 +8,5 @@ eshell/
 projectile-bookmarks.eld
 session.*
 transient/
+
+personal/
