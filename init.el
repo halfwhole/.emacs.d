@@ -64,7 +64,7 @@
   :config
   (global-set-key (kbd "M-x") 'smex)
   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
+  (global-set-key (kbd "C-c M-x") 'execute-extended-command))
 (use-package which-key
   :ensure t
   :config (which-key-mode t))
@@ -75,11 +75,14 @@
 (use-package restart-emacs :ensure t)
 (use-package magit :ensure t)
 (use-package all-the-icons :ensure t)
-(use-package doom-themes :ensure t)
-(use-package doom-modeline :ensure t) ; :init (doom-modeline-mode 1))
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 (use-package markdown-mode :ensure t)
 (use-package yaml-mode :ensure t)
 (use-package package-lint :ensure t)
+(use-package flycheck-package :ensure t
+  :config (flycheck-package-setup))
 
 
 ;;;;;;;;;;;;;;
@@ -122,6 +125,7 @@
   ;; Make these modes not in emacs state, but evil state
   (setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
   (setq evil-emacs-state-modes (delq 'package-menu-mode evil-emacs-state-modes))
+  (setq evil-emacs-state-modes (delq 'Custom-mode evil-emacs-state-modes))
 
   ;; Leader keybindings
   ;; For inspiration, see https://github.com/hlissner/doom-emacs/blob/develop/modules/config/default/+evil-bindings.el
@@ -272,6 +276,15 @@
 (use-package treemacs-magit
   :after treemacs magit
   :ensure t)
+
+
+;;;;;;;;;;;;;;;;;;;;
+;; Custom configs ;;
+;;;;;;;;;;;;;;;;;;;;
+
+;; (add-to-list 'load-path "~/.emacs.d/pride-mode")
+;; (load "pride-mode.el")
+;; (pride-mode)
 
 
 ;;;;;;;;;;;;;;;;;;
