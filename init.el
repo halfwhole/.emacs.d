@@ -24,13 +24,13 @@
 (show-paren-mode 1)
 (desktop-save-mode 1)
 
-(custom-set-variables '(display-time-default-load-average 80)) ; Disable showing the system load average
+(setq display-time-default-load-average 80) ; Disable showing the system load average
 (display-time-mode 1)
 
 (add-to-list 'default-frame-alist '(height . 35))
 (add-to-list 'default-frame-alist '(width . 140))
-(custom-set-variables '(split-height-threshold 80)
-		      '(split-width-threshold 160))
+(setq split-height-threshold 80)
+(setq split-width-threshold 160)
 (setq help-window-select t)
 
 ;; Diplays: font, theme, scrollbar, etc.
@@ -42,8 +42,8 @@
 
 ;; Undos and saves
 (global-undo-tree-mode)
-(custom-set-variables '(undo-tree-history-directory-alist `(("." . "~/.emacs.d/.undo")))
-		      '(backup-directory-alist `(("." . "~/.emacs.d/.saves"))))
+(setq undo-tree-history-directory-alist `(("." . "~/.emacs.d/.undo")))
+(setq backup-directory-alist `(("." . "~/.emacs.d/.saves")))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -52,7 +52,11 @@
 
 (use-package flycheck
   :ensure t
-  :init (global-flycheck-mode))
+  :init (global-flycheck-mode)
+  :config
+  (setq flycheck-python-pycompile-executable "python3")
+  (setq flycheck-python-pylint-executable "python3")
+  (setq flycheck-python-flake8-executable "python3"))
 (use-package ivy
   :ensure t
   :config (ivy-mode t))
@@ -81,8 +85,12 @@
 (use-package markdown-mode :ensure t)
 (use-package yaml-mode :ensure t)
 (use-package package-lint :ensure t)
-(use-package flycheck-package :ensure t
+(use-package flycheck-package
+  :ensure t
   :config (flycheck-package-setup))
+(use-package esup
+  :ensure t
+  :config (setq esup-depth 0))
 
 
 ;;;;;;;;;;;;;;
@@ -144,11 +152,11 @@
       "f s" 'save-buffer
       "g g" 'magit
       "h k" 'describe-key
+      "h m" 'describe-mode
+      "h n" 'describe-minor-mode
       "h f" 'describe-function
       "h v" 'describe-variable
       "m p" 'markdown-preview
-      "m m" 'describe-mode
-      "m n" 'describe-minor-mode
       "o t" 'treemacs
       "p a" 'treemacs-add-project-to-workspace
       "p r" 'treemacs-remove-project-from-workspace
