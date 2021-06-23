@@ -11,6 +11,16 @@
 (package-initialize)
 
 
+;;;;;;;;;;;;;;;;;
+;; Use-package ;;
+;;;;;;;;;;;;;;;;;
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General configurations ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -27,23 +37,30 @@
 (setq display-time-default-load-average 80) ; Disable showing the system load average
 (display-time-mode 1)
 
-(add-to-list 'default-frame-alist '(height . 35))
+(add-to-list 'default-frame-alist '(height . 45))
 (add-to-list 'default-frame-alist '(width . 140))
 (setq split-height-threshold 80)
 (setq split-width-threshold 160)
 (setq help-window-select t)
 
-;; Diplays: font, theme, scrollbar, etc.
+;; Font
 ;; (when (member "DejaVu Sans Mono" (font-family-list))
 ;;   (set-frame-font "DejaVu Sans Mono" t t))
 (when (member "Fira Code" (font-family-list))
   (set-frame-font "Fira Code" t t))
-(load-theme 'doom-one t)
+
+;; Theme
+(use-package doom-themes
+  :ensure t
+  :init (load-theme 'doom-one t))
 
 ;; Undos and saves
-(global-undo-tree-mode)
-(setq undo-tree-history-directory-alist `(("." . "~/.emacs.d/.undo")))
-(setq backup-directory-alist `(("." . "~/.emacs.d/.saves")))
+(use-package undo-tree
+  :ensure t
+  :config
+  (global-undo-tree-mode)
+  (setq undo-tree-history-directory-alist `(("." . "~/.emacs.d/.undo")))
+  (setq backup-directory-alist `(("." . "~/.emacs.d/.saves"))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,7 +98,10 @@
 (use-package all-the-icons :ensure t)
 (use-package doom-modeline
   :ensure t
-  :init (doom-modeline-mode 1))
+  :init
+  (unless (member "all-the-icons" (font-family-list))
+      (all-the-icons-install-fonts))
+  (doom-modeline-mode t))
 (use-package markdown-mode :ensure t)
 (use-package yaml-mode :ensure t)
 (use-package package-lint :ensure t)
@@ -116,6 +136,8 @@
 
 (use-package evil
   :ensure t
+  :init
+  (setq evil-want-keybinding nil)
   :config
   (evil-mode t)
   (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
@@ -187,10 +209,11 @@
     :ensure t
     :config (global-evil-surround-mode))
 
-  ;; Magit
-  (use-package evil-magit
+  ;; Evil-collection for Magit
+  (use-package evil-collection
     :ensure t
-    :config (evil-magit-init)))
+    :config
+    (evil-collection-init 'magit)))
 
 
 ;;;;;;;;;;;;;;
