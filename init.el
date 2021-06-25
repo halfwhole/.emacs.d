@@ -47,7 +47,7 @@
 ;; (when (member "DejaVu Sans Mono" (font-family-list))
 ;;   (set-frame-font "DejaVu Sans Mono" t t))
 (when (member "Fira Code" (font-family-list))
-  (set-frame-font "Fira Code" t t))
+  (set-frame-font "Fira Code 14" t t))
 
 ;; Theme
 (use-package doom-themes
