@@ -44,8 +44,7 @@
 (setq help-window-select t)
 
 ;; Font
-;; (when (member "DejaVu Sans Mono" (font-family-list))
-;;   (set-frame-font "DejaVu Sans Mono" t t))
+;; Alternatives: e.g. DejaVu Sans Mono
 (when (member "Fira Code" (font-family-list))
   (set-frame-font "Fira Code 14" t t))
 
@@ -116,6 +115,8 @@
 ;;;;;;;;;;;;;;
 ;; Org mode ;;
 ;;;;;;;;;;;;;;
+
+(use-package org-tempo)  ; Allow templates such as <s
 
 (setq org-pretty-entities t)
 (setq org-format-latex-options
@@ -213,7 +214,7 @@
   (use-package evil-collection
     :ensure t
     :config
-    (evil-collection-init 'magit)))
+    (evil-collection-init)))
 
 
 ;;;;;;;;;;;;;;
