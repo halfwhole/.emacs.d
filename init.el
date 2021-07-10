@@ -48,6 +48,9 @@
 (when (member "Fira Code" (font-family-list))
   (set-frame-font "Fira Code 14" t t))
 
+;; Japanese keyboard
+(global-set-key [?\M-¥] [?\\])  ; Allow for backslashes using M-¥
+
 ;; Theme
 (use-package doom-themes
   :ensure t
