@@ -34,7 +34,7 @@
 (show-paren-mode 1)
 (desktop-save-mode 1)
 
-(setq display-time-default-load-average 80) ; Disable showing the system load average
+(setq display-time-default-load-average 80)  ; Disable showing the system load average
 (display-time-mode 1)
 
 (add-to-list 'default-frame-alist '(height . 45))
@@ -50,6 +50,12 @@
 
 ;; Japanese keyboard
 (global-set-key [?\M-¥] [?\\])  ; Allow for backslashes using M-¥
+
+;; Ensure $PATH is the same in both emacs and shell (in MacOS)
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; Theme
 (use-package doom-themes
@@ -332,11 +338,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-    ("99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" "9efb2d10bfb38fe7cd4586afb3e644d082cbcdb7435f3d1e8dd9413cbe5e61fc" "76bfa9318742342233d8b0b42e824130b3a50dcc732866ff8e47366aed69de11" "711efe8b1233f2cf52f338fd7f15ce11c836d0b6240a18fffffc2cbd5bfe61b0" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+   '("99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" "9efb2d10bfb38fe7cd4586afb3e644d082cbcdb7435f3d1e8dd9413cbe5e61fc" "76bfa9318742342233d8b0b42e824130b3a50dcc732866ff8e47366aed69de11" "711efe8b1233f2cf52f338fd7f15ce11c836d0b6240a18fffffc2cbd5bfe61b0" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
  '(package-selected-packages
-   (quote
-    (flycheck use-package treemacs-evil projectile yaml-mode markdown-mode evil-magit doom-themes evil-surround restart-emacs treemacs evil-escape evil-leader magit ivy-hydra ivy which-key evil))))
+   '(flycheck use-package treemacs-evil projectile yaml-mode markdown-mode evil-magit doom-themes evil-surround restart-emacs treemacs evil-escape evil-leader magit ivy-hydra ivy which-key evil)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
