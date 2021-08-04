@@ -88,12 +88,12 @@
 (use-package projectile
   :ensure t
   :config (projectile-mode t))
-(use-package smex
-  :ensure t
-  :config
-  (global-set-key (kbd "M-x") 'smex)
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  (global-set-key (kbd "C-c M-x") 'execute-extended-command))
+;; (use-package smex
+;;   :ensure t
+;;   :config
+;;   (global-set-key (kbd "M-x") 'smex)
+;;   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;;   (global-set-key (kbd "C-c M-x") 'execute-extended-command))
 (use-package which-key
   :ensure t
   :config (which-key-mode t))
@@ -119,6 +119,9 @@
 (use-package esup
   :ensure t
   :config (setq esup-depth 0))
+(use-package diff-hl  ; highlights git changes on left side of window
+  :ensure t
+  :config (global-diff-hl-mode))
 
 
 ;;;;;;;;;;;;;;
@@ -150,6 +153,7 @@
   (setq evil-want-keybinding nil)
   :config
   (evil-mode t)
+  (evil-set-undo-system 'undo-tree)
   (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
   (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
   (define-key evil-visual-state-map (kbd "C-u") 'evil-scroll-up)
@@ -174,38 +178,55 @@
     :config
     (global-evil-leader-mode t)
     (evil-leader/set-leader "<SPC>")
+
+    (define-prefix-command 'file-map)  ; f
+    (define-key file-map "d" 'dired)
+    (define-key file-map "p" '(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+    (define-key file-map "s" 'save-buffer)
+
+    (define-prefix-command 'treemacs-map)  ; t
+    (define-key treemacs-map "t" 'treemacs)
+    (define-key treemacs-map "p a" 'treemacs-add-project-to-workspace)
+    (define-key treemacs-map "p r" 'treemacs-remove-project-from-workspace)
+    (define-key treemacs-map "w a" ' treemacs-create-workspace)
+    (define-key treemacs-map "w r" ' treemacs-remove-workspace)
+    (define-key treemacs-map "w s" ' treemacs-switch-workspace)
+    (define-key treemacs-map "w e" ' treemacs-edit-workspaces)
+
+    (define-prefix-command 'help-map)  ; h
+    (define-key help-map "k" 'describe-key)
+    (define-key help-map "m" 'describe-mode)
+    (define-key help-map "n" 'describe-minor-mode)
+    (define-key help-map "f" 'describe-function)
+    (define-key help-map "v" 'describe-variable)
+
+    (define-prefix-command 'window-map)  ; w
+    (define-key window-map "d" 'evil-window-delete)
+    (define-key window-map "k" 'evil-window-up)
+    (define-key window-map "j" 'evil-window-down)
+    (define-key window-map "h" 'evil-window-left)
+    (define-key window-map "l" 'evil-window-right)
+    (define-key window-map "K" 'evil-window-move-very-top)
+    (define-key window-map "J" 'evil-window-move-very-bottom)
+    (define-key window-map "H" 'evil-window-move-far-left)
+    (define-key window-map "L" 'evil-window-move-far-right)
+    (define-key window-map "v" 'split-window-right)
+    (define-key window-map "-" 'split-window-below)
+    (define-key window-map "u" 'winner-undo)
+    (define-key window-map "r" 'winner-redo)
+
     (evil-leader/set-key
       "." 'find-file
       "b i" 'ibuffer
       "b k" 'kill-buffer
       "c x" 'flycheck-list-errors
-      "f d" 'dired
-      "f p" '(lambda () (interactive) (find-file "~/.emacs.d/init.el"))
-      "f s" 'save-buffer
+      "f" '("file" . file-map)
       "g g" 'magit
-      "h k" 'describe-key
-      "h m" 'describe-mode
-      "h n" 'describe-minor-mode
-      "h f" 'describe-function
-      "h v" 'describe-variable
+      "h" '("help" . help-map)
       "m p" 'markdown-preview
-      "o t" 'treemacs
-      "p a" 'treemacs-add-project-to-workspace
-      "p r" 'treemacs-remove-project-from-workspace
+      "t" '("treemacs" . treemacs-map)
       "q r" 'restart-emacs
-      "w d" 'evil-window-delete
-      "w k" 'evil-window-up
-      "w j" 'evil-window-down
-      "w h" 'evil-window-left
-      "w l" 'evil-window-right
-      "w K" 'evil-window-move-very-top
-      "w J" 'evil-window-move-very-bottom
-      "w H" 'evil-window-move-far-left
-      "w L" 'evil-window-move-far-right
-      "w v" 'split-window-right
-      "w -" 'split-window-below
-      "w u" 'winner-undo
-      "w r" 'winner-redo))
+      "w" '("window" . window-map)))
 
   ;; Escape using jk
   (use-package evil-escape
@@ -302,20 +323,22 @@
         ("C-x t M-t" . treemacs-find-tag)))
 
 (use-package treemacs-evil
-  :after treemacs evil
-  :ensure t)
+  :after (treemacs evil)
+  :ensure t
+  :config
+  (define-key evil-treemacs-state-map (kbd "C-u") 'evil-scroll-up))
 
 (use-package treemacs-projectile
-  :after treemacs projectile
+  :after (treemacs projectile)
   :ensure t)
 
 (use-package treemacs-icons-dired
-  :after treemacs dired
+  :after (treemacs dired)
   :ensure t
   :config (treemacs-icons-dired-mode))
 
 (use-package treemacs-magit
-  :after treemacs magit
+  :after (treemacs magit)
   :ensure t)
 
 
