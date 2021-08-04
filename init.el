@@ -60,7 +60,7 @@
 ;; Theme
 (use-package doom-themes
   :ensure t
-  :init (load-theme 'doom-one t))
+  :init (load-theme 'doom-dark+ t))
 
 ;; Undos and saves
 (use-package undo-tree
@@ -84,10 +84,14 @@
   (setq flycheck-python-flake8-executable "python3"))
 (use-package ivy
   :ensure t
-  :config (ivy-mode t))
+  :config
+  (ivy-mode t)
+  (define-key ivy-minibuffer-map (kbd "C-u") 'ivy-scroll-down-command)
+  (define-key ivy-minibuffer-map (kbd "C-d") 'ivy-scroll-up-command))
 (use-package projectile
   :ensure t
   :config (projectile-mode t))
+(use-package counsel-projectile :ensure t)  ; incremental completion
 ;; (use-package smex
 ;;   :ensure t
 ;;   :config
@@ -122,6 +126,14 @@
 (use-package diff-hl  ; highlights git changes on left side of window
   :ensure t
   :config (global-diff-hl-mode))
+(use-package ag :ensure t)  ; enable search, used by projectile
+(use-package dumb-jump  ; enable jump to definition
+  :ensure t
+  :config
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  (global-set-key (kbd "<f12>") 'evil-goto-definition))
+
+;; (use-package company :ensure t)
 
 
 ;;;;;;;;;;;;;;
@@ -186,12 +198,12 @@
 
     (define-prefix-command 'treemacs-map)  ; t
     (define-key treemacs-map "t" 'treemacs)
-    (define-key treemacs-map "p a" 'treemacs-add-project-to-workspace)
-    (define-key treemacs-map "p r" 'treemacs-remove-project-from-workspace)
-    (define-key treemacs-map "w a" ' treemacs-create-workspace)
-    (define-key treemacs-map "w r" ' treemacs-remove-workspace)
-    (define-key treemacs-map "w s" ' treemacs-switch-workspace)
-    (define-key treemacs-map "w e" ' treemacs-edit-workspaces)
+    (define-key treemacs-map "pa" 'treemacs-add-project-to-workspace)
+    (define-key treemacs-map "pr" 'treemacs-remove-project-from-workspace)
+    (define-key treemacs-map "wa" ' treemacs-create-workspace)
+    (define-key treemacs-map "wr" ' treemacs-remove-workspace)
+    (define-key treemacs-map "ws" ' treemacs-switch-workspace)
+    (define-key treemacs-map "we" ' treemacs-edit-workspaces)
 
     (define-prefix-command 'help-map)  ; h
     (define-key help-map "k" 'describe-key)
@@ -215,6 +227,11 @@
     (define-key window-map "u" 'winner-undo)
     (define-key window-map "r" 'winner-redo)
 
+    (define-prefix-command 'projectile-map)  ; p
+    (define-key projectile-map "s" 'counsel-projectile-ag)
+    (define-key projectile-map "f" 'counsel-projectile-find-file-dwim)
+    (define-key projectile-map "d" 'counsel-projectile-find-dir)
+
     (evil-leader/set-key
       "." 'find-file
       "b i" 'ibuffer
@@ -225,6 +242,8 @@
       "h" '("help" . help-map)
       "m p" 'markdown-preview
       "t" '("treemacs" . treemacs-map)
+      ;; "p" '("projectile" . projectile-command-map)
+      "p" '("projectile" . projectile-map)
       "q r" 'restart-emacs
       "w" '("window" . window-map)))
 
