@@ -28,13 +28,15 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
+(global-set-key (kbd "<f10>") 'toggle-frame-maximized)
+(global-set-key (kbd "<f11>") 'toggle-frame-fullscreen)
 
 (global-hl-line-mode 1)
 (global-display-line-numbers-mode 1)
 (show-paren-mode 1)
 (desktop-save-mode 1)
 
-(setq display-time-default-load-average 80)  ; Disable showing the system load average
+(setq display-time-default-load-average nil)  ; Disable showing the system load average
 (display-time-mode 1)
 
 (add-to-list 'default-frame-alist '(height . 45))
@@ -43,10 +45,14 @@
 (setq split-width-threshold 160)
 (setq help-window-select t)
 
+;; Line wrap (continuation lines): only right and no left arrow indicator
+(setf (alist-get 'truncation fringe-indicator-alist) '(left-arrow right-arrow))
+(setf (alist-get 'continuation fringe-indicator-alist) '(nil right-curly-arrow))
+
 ;; Font
-;; Alternatives: e.g. DejaVu Sans Mono
+;; Alternatives: e.g. DejaVu Sans Mono, Fira Code
 (when (member "Fira Code" (font-family-list))
-  (set-frame-font "Fira Code 14" t t))
+  (set-frame-font "Fira Code 13" t t))
 
 ;; Japanese keyboard
 (global-set-key [?\M-¥] [?\\])  ; Allow for backslashes using M-¥
@@ -60,7 +66,7 @@
 ;; Theme
 (use-package doom-themes
   :ensure t
-  :init (load-theme 'doom-dark+ t))
+  :init (load-theme 'doom-one t))
 
 ;; Undos and saves
 (use-package undo-tree
@@ -70,6 +76,9 @@
   (setq undo-tree-history-directory-alist `(("." . "~/.emacs.d/.undo")))
   (setq backup-directory-alist `(("." . "~/.emacs.d/.saves"))))
 
+;; Language settings
+(setq js-indent-level 2)  ; 2 spaces instead of 4 spaces
+(setq css-indent-offset 2)  ; 2 spaces instead of 4 spacesk
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous packages ;;
@@ -91,7 +100,11 @@
 (use-package projectile
   :ensure t
   :config (projectile-mode t))
-(use-package counsel-projectile :ensure t)  ; incremental completion
+(use-package counsel  ; better completion
+  :ensure t
+  :config
+  (global-set-key (kbd "M-x") 'counsel-M-x))  ; better M-x
+(use-package counsel-projectile :ensure t)  ; incremental completion for project search
 ;; (use-package smex
 ;;   :ensure t
 ;;   :config
@@ -123,7 +136,7 @@
 (use-package esup
   :ensure t
   :config (setq esup-depth 0))
-(use-package diff-hl  ; highlights git changes on left side of window
+(use-package diff-hl  ; highlight git changes on left side of window
   :ensure t
   :config (global-diff-hl-mode))
 (use-package ag :ensure t)  ; enable search, used by projectile
@@ -132,6 +145,13 @@
   :config
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
   (global-set-key (kbd "<f12>") 'evil-goto-definition))
+(use-package highlight-indent-guides  ; highlight indentation levels in code
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+  (setq highlight-indent-guides-method 'character)
+  (setq highlight-indent-guides-character ?|)
+  (setq highlight-indent-guides-responsive 'top))
 
 ;; (use-package company :ensure t)
 
@@ -146,6 +166,9 @@
 (setq org-format-latex-options
       '(:foreground "White" :background "#222222" :scale 1.5 :html-foreground "default" :html-background "Transparent" :html-scale 1.0 :matchers
 		    ("begin" "$1" "$" "$$" "\\(" "\\[")))
+
+(setq org-adapt-indentation nil)
+;; (add-hook 'org-mode-hook 'org-indent-mode)
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -173,6 +196,7 @@
   (define-key evil-visual-state-map (kbd "g c") 'comment-or-uncomment-region)
   (define-key evil-visual-state-map (kbd "<tab>") 'indent-region)
 
+  ;; (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1))) ;; disable auto-indentation of new lines in org
   (add-hook 'org-mode-hook (lambda ()
 			     (push '(?$ . ("$" . "$")) evil-surround-pairs-alist)))  ; not working?
   (add-hook 'org-mode-hook (lambda ()
@@ -191,10 +215,18 @@
     (global-evil-leader-mode t)
     (evil-leader/set-leader "<SPC>")
 
+    (define-prefix-command 'buffer-map)  ; b
+    (define-key buffer-map "i" 'ibuffer)
+    (define-key buffer-map "k" 'kill-buffer)
+
     (define-prefix-command 'file-map)  ; f
     (define-key file-map "d" 'dired)
     (define-key file-map "p" '(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
     (define-key file-map "s" 'save-buffer)
+
+    (define-prefix-command 'magit-map)  ; g
+    (define-key magit-map "g" 'magit)
+    (define-key magit-map "b" 'magit-blame)
 
     (define-prefix-command 'treemacs-map)  ; t
     (define-key treemacs-map "t" 'treemacs)
@@ -234,11 +266,10 @@
 
     (evil-leader/set-key
       "." 'find-file
-      "b i" 'ibuffer
-      "b k" 'kill-buffer
-      "c x" 'flycheck-list-errors
+      "b" '("buffer" . buffer-map)
+      "c" 'flycheck-list-errors
       "f" '("file" . file-map)
-      "g g" 'magit
+      "g" '("magit" . magit-map)
       "h" '("help" . help-map)
       "m p" 'markdown-preview
       "t" '("treemacs" . treemacs-map)
@@ -379,10 +410,44 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#1e1e1e" "#D16969" "#579C4C" "#D7BA7D" "#339CDB" "#C586C0" "#85DDFF" "#d4d4d4"])
  '(custom-safe-themes
-   '("99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" "9efb2d10bfb38fe7cd4586afb3e644d082cbcdb7435f3d1e8dd9413cbe5e61fc" "76bfa9318742342233d8b0b42e824130b3a50dcc732866ff8e47366aed69de11" "711efe8b1233f2cf52f338fd7f15ce11c836d0b6240a18fffffc2cbd5bfe61b0" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
+   '("6c386d159853b0ee6695b45e64f598ed45bd67c47f671f69100817d7db64724d" "99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" "9efb2d10bfb38fe7cd4586afb3e644d082cbcdb7435f3d1e8dd9413cbe5e61fc" "76bfa9318742342233d8b0b42e824130b3a50dcc732866ff8e47366aed69de11" "711efe8b1233f2cf52f338fd7f15ce11c836d0b6240a18fffffc2cbd5bfe61b0" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
+ '(exwm-floating-border-color "#252526")
+ '(fci-rule-color "#37474F")
+ '(highlight-tail-colors ((("#232a22" "#232a21") . 0) (("#283134" "#243034") . 20)))
+ '(jdee-db-active-breakpoint-face-colors (cons "#171F24" "#237AD3"))
+ '(jdee-db-requested-breakpoint-face-colors (cons "#171F24" "#579C4C"))
+ '(jdee-db-spec-breakpoint-face-colors (cons "#171F24" "#777778"))
+ '(objed-cursor-color "#D16969")
  '(package-selected-packages
-   '(flycheck use-package treemacs-evil projectile yaml-mode markdown-mode evil-magit doom-themes evil-surround restart-emacs treemacs evil-escape evil-leader magit ivy-hydra ivy which-key evil)))
+   '(flycheck use-package treemacs-evil projectile yaml-mode markdown-mode evil-magit doom-themes evil-surround restart-emacs treemacs evil-escape evil-leader magit ivy-hydra ivy which-key evil))
+ '(pdf-view-midnight-colors (cons "#d4d4d4" "#1e1e1e"))
+ '(rustic-ansi-faces
+   ["#1e1e1e" "#D16969" "#579C4C" "#D7BA7D" "#339CDB" "#C586C0" "#85DDFF" "#d4d4d4"])
+ '(vc-annotate-background "#1e1e1e")
+ '(vc-annotate-color-map
+   (list
+    (cons 20 "#579C4C")
+    (cons 40 "#81a65c")
+    (cons 60 "#acb06c")
+    (cons 80 "#D7BA7D")
+    (cons 100 "#d8ab79")
+    (cons 120 "#d99c76")
+    (cons 140 "#DB8E73")
+    (cons 160 "#d38b8c")
+    (cons 180 "#cc88a6")
+    (cons 200 "#C586C0")
+    (cons 220 "#c97ca3")
+    (cons 240 "#cd7286")
+    (cons 260 "#D16969")
+    (cons 280 "#ba6c6c")
+    (cons 300 "#a37070")
+    (cons 320 "#8d7374")
+    (cons 340 "#37474F")
+    (cons 360 "#37474F")))
+ '(vc-annotate-very-old-color nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
