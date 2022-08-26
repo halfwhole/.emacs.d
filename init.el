@@ -201,6 +201,8 @@
 			     (push '(?$ . ("$" . "$")) evil-surround-pairs-alist)))  ; not working?
   (add-hook 'org-mode-hook (lambda ()
 			     (push '(?/ . ("/" . "/")) evil-surround-pairs-alist)))  ; not working?
+  (add-hook 'org-mode-hook (lambda ()
+			     (setq evil-auto-indent nil)))
 
   ;; Make these modes not in emacs state, but evil state
   (setq evil-emacs-state-modes (delq 'ibuffer-mode evil-emacs-state-modes))
