@@ -78,7 +78,7 @@
 
 ;; Language settings
 (setq js-indent-level 2)  ; 2 spaces instead of 4 spaces
-(setq css-indent-offset 2)  ; 2 spaces instead of 4 spacesk
+(setq css-indent-offset 2)  ; 2 spaces instead of 4 spaces
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous packages ;;
