@@ -285,7 +285,8 @@
     :ensure t
     :config
     (evil-escape-mode t)
-    (setq-default evil-escape-key-sequence "uu"))
+    (setq-default evil-escape-key-sequence "uu")
+    (setq-default evil-escape-delay 0.2))
 
   ;; Surround
   (use-package evil-surround
