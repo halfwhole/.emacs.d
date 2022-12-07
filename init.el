@@ -280,12 +280,12 @@
       "q r" 'restart-emacs
       "w" '("window" . window-map)))
 
-  ;; Escape using jk
+  ;; Escape using uu
   (use-package evil-escape
     :ensure t
     :config
     (evil-escape-mode t)
-    (setq-default evil-escape-key-sequence "jk"))
+    (setq-default evil-escape-key-sequence "uu"))
 
   ;; Surround
   (use-package evil-surround
