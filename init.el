@@ -21,6 +21,16 @@
 (require 'use-package)
 
 
+;;;;;;;;;;;;;;;;;;;;;;
+;; Custom functions ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+(defun open-init-el ()
+  "Opens init.el, my custom config file for Emacs."
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General configurations ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -223,7 +233,7 @@
 
     (define-prefix-command 'file-map)  ; f
     (define-key file-map "d" 'dired)
-    (define-key file-map "p" '(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+    (define-key file-map "p" 'open-init-el)
     (define-key file-map "s" 'save-buffer)
 
     (define-prefix-command 'magit-map)  ; g
